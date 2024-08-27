@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Unit tests for the {@link Manufacturer} class.
+ * Unit tests for the Manufacturer class.
  * Verifies the behavior of constructors, getters, setters, and the toString method.
  *
  * @author danielmunteanu

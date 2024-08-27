@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Unit tests for the {@link Car} class.
+ * Unit tests for the Car class.
  */
 public class CarTest {
 

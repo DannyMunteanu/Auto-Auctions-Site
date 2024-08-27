@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Unit tests for the {@link Model} class.
+ * Unit tests for the Model class.
  * Verifies the behavior of constructors, getters, and the toString method.
  *
  * @author danielmunteanu

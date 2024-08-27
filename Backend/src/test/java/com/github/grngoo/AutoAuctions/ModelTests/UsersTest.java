@@ -7,6 +7,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+ * Test cases for Users class.
+ */
 public class UsersTest {
 
     private Users user;
@@ -20,25 +23,25 @@ public class UsersTest {
     @Test
     @DisplayName("Test getUsername method")
     public void testGetUsername() {
-        assertEquals("johndoe", user.getUsername(), "Username should be johndoe");
+        assertEquals("johndoe", user.getUsername());
     }
 
     @Test
     @DisplayName("Test getPassword method")
     public void testGetPassword() {
-        assertEquals("password123", user.getPassword(), "Password should be password123");
+        assertEquals("password123", user.getPassword());
     }
 
     @Test
     @DisplayName("Test getEmail method")
     public void testGetEmail() {
-        assertEquals("johndoe@example.com", user.getEmail(), "Email should be johndoe@example.com");
+        assertEquals("johndoe@example.com", user.getEmail());
     }
 
     @Test
     @DisplayName("Test getTelephone method")
     public void testGetTelephone() {
-        assertEquals("1234567890", user.getTelephone(), "Telephone should be 1234567890");
+        assertEquals("1234567890", user.getTelephone());
     }
 
     @Test
