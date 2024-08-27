@@ -1,6 +1,6 @@
-package com.github.grngoo.AutoAuctions;
+package com.github.grngoo.AutoAuctions.ModelTests;
 
-import com.github.grngoo.AutoAuctions.Model.Manufacturer;
+import com.github.grngoo.AutoAuctions.Models.Manufacturer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

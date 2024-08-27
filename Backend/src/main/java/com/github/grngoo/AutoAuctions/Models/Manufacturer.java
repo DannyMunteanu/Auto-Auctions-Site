@@ -1,4 +1,4 @@
-package com.github.grngoo.AutoAuctions.Model;
+package com.github.grngoo.AutoAuctions.Models;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -22,6 +22,10 @@ public class Manufacturer {
     @Column(name = "origincountry")
     private String origincountry;
 
+    /**
+     * Default constructor.
+     * Initializes a new instance of the Manufacturer class.
+     */
     public Manufacturer() {}
 
     /**
