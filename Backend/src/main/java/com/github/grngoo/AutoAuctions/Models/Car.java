@@ -3,7 +3,8 @@ package com.github.grngoo.AutoAuctions.Models;
 import jakarta.persistence.*;
 
 /**
- *
+ * Entity Class mapped to the Model table in database.
+ * Consists of the columns for the represented entity.
  * @author danielmunteanu
  */
 @Entity
