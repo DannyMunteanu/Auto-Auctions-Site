@@ -1,10 +1,15 @@
 package com.github.grngoo.AutoAuctions.Models;
 
 import jakarta.persistence.*;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+/**
+ * Entity Class mapped to the Listing table in database.
+ * Consists of the represented Model entity.
+ *
+ * @author danielmunteanu
+ */
 @Entity
 @Table(name = "listing")
 public class Listing {
