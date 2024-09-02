@@ -27,25 +27,16 @@ public interface ListingRepository extends JpaRepository<Listing, Long> {
     /**
      * Find listings that start after the specified time.
      *
-     * @param start_time the start time
+     * @param start the start time
      * @return a list of listings that start after the specified time
      */
-    List<Listing> findByStart_timeAfter(LocalDateTime start_time);
+    List<Listing> findByStartAfter(LocalDateTime start);
 
     /**
      * Find listings that end before the specified time.
      *
-     * @param end_time the end time
+     * @param end the end time
      * @return a list of listings that end before the specified time
      */
-    List<Listing> findByEnd_timeBefore(LocalDateTime end_time);
-
-    /**
-     * Find all listings within a specific time range.
-     *
-     * @param start_time the start of the time range
-     * @param end_time the end of the time range
-     * @return a list of listings within the time range
-     */
-    List<Listing> findByStart_timeBetweenAndEnd_timeBetween(LocalDateTime start_time, LocalDateTime end_time);
+    List<Listing> findByEndBefore(LocalDateTime end);
 }

@@ -24,7 +24,7 @@ public class Bid {
     private Listing listing;
 
     @Column(name = "bid_time", nullable = false)
-    private LocalDateTime bid_time;
+    private LocalDateTime time;
 
     @Column(name = "amount", nullable = false)
     private BigDecimal amount;
@@ -50,7 +50,7 @@ public class Bid {
     public Bid(Long bidid, Listing listing, LocalDateTime bid_time, BigDecimal amount, Users user) {
         this.bidid = bidid;
         this.listing = listing;
-        this.bid_time = bid_time;
+        this.time = bid_time;
         this.amount = amount;
         this.user = user;
     }
@@ -78,8 +78,8 @@ public class Bid {
      *
      * @return the time when this bid was placed
      */
-    public LocalDateTime getBid_time() {
-        return bid_time;
+    public LocalDateTime getTime() {
+        return time;
     }
 
     /**
@@ -112,10 +112,10 @@ public class Bid {
     /**
      * Sets the time when this bid was placed.
      *
-     * @param bid_time the time of the bid to set
+     * @param time the time of the bid to set
      */
-    public void setBid_time(LocalDateTime bid_time) {
-        this.bid_time = bid_time;
+    public void setTime(LocalDateTime time) {
+        this.time = time;
     }
 
     /**
@@ -147,7 +147,7 @@ public class Bid {
         return ("Bid Details: \n" +
                 "Bid Id: " + bidid + "\n" +
                 "Listing Details: " + listing + "\n" +
-                "Bid Time: " + bid_time + "\n" +
+                "Bid Time: " + time + "\n" +
                 "Amount: " + amount + "\n" +
                 "User: " + user);
     }

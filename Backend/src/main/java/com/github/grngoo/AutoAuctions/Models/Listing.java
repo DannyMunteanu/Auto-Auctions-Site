@@ -31,10 +31,10 @@ public class Listing {
     private BigDecimal reserve;
 
     @Column(name = "start_time", nullable = false)
-    private LocalDateTime start_time;
+    private LocalDateTime start;
 
     @Column(name = "end_time", nullable = false)
-    private LocalDateTime end_time;
+    private LocalDateTime end;
 
     /**
      * Default constructor for Class.
@@ -47,15 +47,15 @@ public class Listing {
      * @param car        the car associated with the listing
      * @param user       the user who created the listing
      * @param reserve    the reserve price for the listing
-     * @param start_time  the start time of the listing
-     * @param end_time    the end time of the listing
+     * @param start  the start time of the listing
+     * @param end    the end time of the listing
      */
-    public Listing(Car car, Users user, BigDecimal reserve, LocalDateTime start_time, LocalDateTime end_time) {
+    public Listing(Car car, Users user, BigDecimal reserve, LocalDateTime start, LocalDateTime end) {
         this.car = car;
         this.user = user;
         this.reserve = reserve;
-        this.start_time = start_time;
-        this.end_time = end_time;
+        this.start = start;
+        this.end = end;
     }
 
     /**
@@ -99,8 +99,8 @@ public class Listing {
      *
      * @return the start time
      */
-    public LocalDateTime getStart_time() {
-        return start_time;
+    public LocalDateTime getStart() {
+        return start;
     }
 
     /**
@@ -108,8 +108,8 @@ public class Listing {
      *
      * @return the end time
      */
-    public LocalDateTime getEnd_time() {
-        return end_time;
+    public LocalDateTime getEnd() {
+        return end;
     }
 
     /**
@@ -124,19 +124,19 @@ public class Listing {
     /**
      * Sets the start time of this listing.
      *
-     * @param start_time the start time to set
+     * @param start the start time to set
      */
-    public void setStart_time(LocalDateTime start_time) {
-        this.start_time = start_time;
+    public void setStart(LocalDateTime start) {
+        this.start = start;
     }
 
     /**
      * Sets the end time of this listing.
      *
-     * @param end_time the end time to set
+     * @param end the end time to set
      */
-    public void setEnd_time(LocalDateTime end_time) {
-        this.end_time = end_time;
+    public void setEnd(LocalDateTime end) {
+        this.end = end;
     }
 
     /**
@@ -151,7 +151,7 @@ public class Listing {
                 "Car: " + car + "\n" +
                 "User: " + user + "\n" +
                 "Reserve: " + reserve + "\n" +
-                "Start Time:" + start_time + "\n" +
-                "End Time: " + end_time);
+                "Start Time:" + start + "\n" +
+                "End Time: " + end);
     }
 }

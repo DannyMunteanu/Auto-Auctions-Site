@@ -43,8 +43,8 @@ public class ListingTest {
         assertNotNull(listing.getCar());
         assertNotNull(listing.getUser());
         assertEquals(reserve, listing.getReserve());
-        assertEquals(startTime, listing.getStart_time());
-        assertEquals(endTime, listing.getEnd_time());
+        assertEquals(startTime, listing.getStart());
+        assertEquals(endTime, listing.getEnd());
     }
 
     @Test
@@ -55,12 +55,12 @@ public class ListingTest {
         LocalDateTime newEndTime = LocalDateTime.of(2024, 8, 31, 17, 0);
 
         listing.setReserve(newReserve);
-        listing.setStart_time(newStartTime);
-        listing.setEnd_time(newEndTime);
+        listing.setStart(newStartTime);
+        listing.setEnd(newEndTime);
 
         assertEquals(newReserve, listing.getReserve());
-        assertEquals(newStartTime, listing.getStart_time());
-        assertEquals(newEndTime, listing.getEnd_time());
+        assertEquals(newStartTime, listing.getStart());
+        assertEquals(newEndTime, listing.getEnd());
     }
 
     @Test

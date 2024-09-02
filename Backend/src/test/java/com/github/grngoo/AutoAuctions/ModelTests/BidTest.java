@@ -36,7 +36,7 @@ class BidTest {
     void testBidConstructorAndGetters() {
         assertEquals(1L, bid.getBidid());
         assertEquals(listing, bid.getListing());
-        assertEquals(bidTime, bid.getBid_time());
+        assertEquals(bidTime, bid.getTime());
         assertEquals(amount, bid.getAmount());
         assertEquals(user, bid.getUser());
     }
@@ -53,8 +53,8 @@ class BidTest {
     @DisplayName("Test setBid_time")
     void testSetBidTime() {
         LocalDateTime newBidTime = LocalDateTime.now().plusDays(1);
-        bid.setBid_time(newBidTime);
-        assertEquals(newBidTime, bid.getBid_time());
+        bid.setTime(newBidTime);
+        assertEquals(newBidTime, bid.getTime());
     }
 
     @Test

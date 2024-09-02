@@ -20,7 +20,7 @@ public interface CarRepository extends JpaRepository<Car, String> {
      * @param model type of car (make, series etc)
      * @return All cars of same model.
      */
-    List<Car> FindByModelModelid (Model model);
+    List<Car> findByModelModelid (Model model);
 
     /**
      * Finds all cars of a certain color
@@ -28,7 +28,7 @@ public interface CarRepository extends JpaRepository<Car, String> {
      * @param color Color of bodywork
      * @return All cars with same color
      */
-    List<Car> FindByColor (String color);
+    List<Car> findByColor (String color);
 
     /**
      * Find all cars within certain mileage range
@@ -37,7 +37,7 @@ public interface CarRepository extends JpaRepository<Car, String> {
      * @param maxMileage upper bound
      * @return All cars between range
      */
-    List<Car> FindByMileageBetween (Integer minMileage, Integer maxMileage);
+    List<Car> findByMileageBetween (Integer minMileage, Integer maxMileage);
 
     /**
      * Find all cars between year range
@@ -45,7 +45,7 @@ public interface CarRepository extends JpaRepository<Car, String> {
      * @param maxYear uppper bound
      * @return All cars between specified years
      */
-    List<Car> FindByYearBetween(Integer minYear, Integer maxYear);
+    List<Car> findByYearBetween(Integer minYear, Integer maxYear);
 
     /**
      * Finds all cars with range specified for number of previous owners
@@ -53,5 +53,5 @@ public interface CarRepository extends JpaRepository<Car, String> {
      * @param maxPreviousowners upper bounc
      * @return All cars within specified number of preivous owners.
      */
-    List<Car> FindByPreviousownersBetween(Integer minPreviousowners, Integer maxPreviousowners);
+    List<Car> findByPreviousownersBetween(Integer minPreviousowners, Integer maxPreviousowners);
 }
