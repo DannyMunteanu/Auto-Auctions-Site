@@ -17,10 +17,10 @@ public interface CarRepository extends JpaRepository<Car, String> {
     /**
      * Finds all cars of certain model
      *
-     * @param model type of car (make, series etc)
+     * @param modelModelid type of car (make, series etc)
      * @return All cars of same model.
      */
-    List<Car> findByModelModelid (Model model);
+    List<Car> findByModelModelid (Long modelModelid);
 
     /**
      * Finds all cars of a certain color
