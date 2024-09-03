@@ -18,7 +18,7 @@ import java.util.Optional;
 public class ListingService {
 
     @Autowired
-    ListingRepository listingRepository;
+    private ListingRepository listingRepository;
 
     /**
      * Finds a specified listing
