@@ -32,14 +32,4 @@ public interface UsersRepository extends JpaRepository<Users, String> {
      * @return an Optional containing the user if found, or empty if not found
      */
     Optional<Users> findByTelephone(String telephone);
-
-    /**
-     * Delete an account/user given the correct username and password
-     *
-     * @param username name of account
-     * @param password secret value for account
-     * @return row (number) affected by the deletion.
-     */
-    @Query("DELETE FROM Users u WHERE u.username = :username AND u.password = :password")
-    Integer deleteByUsernameAndPassword(@Param("username") String username, @Param("password") String password);
 }
