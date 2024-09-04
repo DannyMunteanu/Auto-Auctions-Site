@@ -13,6 +13,11 @@ import org.springframework.security.web.SecurityFilterChain;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
+/**
+ * Spring Security Configuration
+ *
+ * @author danielmunteanu
+ */
 @Configuration
 public class SecurityConfiguration {
 
