@@ -46,22 +46,4 @@ public class ManufacturerController {
         List<Manufacturer> manufacturers = manufacturerService.findByOriginCountry(manufacturerDto.getCountry());
         return new ResponseEntity<>(manufacturers, HttpStatus.OK);
     }
-
-    /**
-     * Add a new manufacturer.
-     *
-     * @param manufacturerDto Data Transferrable Object to store request body params.
-     * @return status if added or if manufacturer already exists
-     */
-    @PostMapping("/add")
-    public ResponseEntity<String> addManufacturer(@Valid @RequestBody ManufacturerDto manufacturerDto) {
-        Optional<Manufacturer> existingManufactuer = manufacturerService.findManufacturer(manufacturerDto.getName());
-        if (existingManufactuer.isEmpty()) {
-            Manufacturer manufacturer = new Manufacturer(manufacturerDto.getName(), manufacturerDto.getCountry());
-            manufacturerService.saveManufacturer(manufacturer);
-            return ResponseEntity.ok("New manufacturer added");
-        } else {
-            return ResponseEntity.status(401).body("Manufacturer already exists");
-        }
-    }
 }

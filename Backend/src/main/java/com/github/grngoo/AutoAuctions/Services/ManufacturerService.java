@@ -48,14 +48,4 @@ public class ManufacturerService {
     public List<Manufacturer> findByOriginCountry(String country) {
         return manufacturerRepository.findByOrigincountry(country);
     }
-
-    /**
-     * Adds a new manufacturer.
-     *
-     * @param manufacturer to be added to database.
-     * @return Manufacturer entity
-     */
-    public Manufacturer saveManufacturer(Manufacturer manufacturer) {
-        return manufacturerRepository.save(manufacturer);
-    }
 }

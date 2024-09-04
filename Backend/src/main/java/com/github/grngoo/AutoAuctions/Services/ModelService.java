@@ -87,13 +87,4 @@ public class ModelService {
     public Model saveModel(Model model) {
         return modelRepository.save(model);
     }
-
-    /**
-     * Delete specific model.
-     *
-     * @param id unique value for model.
-     */
-    public void deleteModel(Long id) {
-        modelRepository.deleteById(id);
-    }
 }
