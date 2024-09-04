@@ -21,25 +21,25 @@ public interface BidRepository extends JpaRepository<Bid, Long> {
     /**
      * Find entire bid history of a given user.
      *
-     * @param user entity of user linked to bid.
+     * @param userUsername unique name of user linked to bid.
      * @return all bids related to a certain user.
      */
-    List<Bid> findByUserUsername(Users user);
+    List<Bid> findByUserUsername(String userUsername);
 
     /**
      * Finds all bids for a specific listing.
      *
-     * @param listing the listing for which bids are to be retrieved
+     * @param listingListingid the listing for which bids are to be retrieved
      * @return a list of bids for the given listing
      */
-    List<Bid> findByListing(Listing listing);
+    List<Bid> findByListingListingid(Long listingListingid);
 
     /**
-     * Finds the highest bid for a specific listing.
+     * Finds the highest bid for a specific listing by listing ID.
      *
-     * @param listing the listing for which the highest bid is to be retrieved.
+     * @param listingId the ID of the listing for which the highest bid is to be retrieved.
      * @return an optional containing the highest bid for the given listing, or empty if no bids are found.
      */
-    @Query("SELECT b FROM Bid b WHERE b.listing = :listing ORDER BY b.amount DESC LIMIT 1")
-    Optional<Bid> findHighestBidForListing(@Param("listing") Listing listing);
+    @Query("SELECT b FROM Bid b WHERE b.listing.listingid = :listingId ORDER BY b.amount DESC")
+    Optional<Bid> findHighestBidForListing(@Param("listingId") Long listingId);
 }

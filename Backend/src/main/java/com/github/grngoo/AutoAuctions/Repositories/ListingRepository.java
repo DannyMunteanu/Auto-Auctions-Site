@@ -19,10 +19,10 @@ public interface ListingRepository extends JpaRepository<Listing, Long> {
     /**
      * Find all Listings created by a certain user.
      *
-     * @param user associated with the listing.
+     * @param userUsername account name associated with the listing.
      * @return all listings made by a certain user.
      */
-    List<Listing> findByUserUsername(Users user);
+    List<Listing> findByUserUsername(String userUsername);
 
     /**
      * Find listings that start after the specified time.
