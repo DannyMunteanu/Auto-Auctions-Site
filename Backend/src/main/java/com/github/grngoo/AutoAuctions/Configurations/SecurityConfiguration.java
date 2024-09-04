@@ -33,14 +33,19 @@ public class SecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .csrf(AbstractHttpConfigurer::disable)
+            //for now making all pages accessible for testing
             .authorizeHttpRequests(auths -> auths
-                    .requestMatchers("/api/user/login", "/api/user/register", "/api/user/delete").permitAll()
+                    .anyRequest().permitAll()
+                    /*
+                    .requestMatchers("/api/user/login", "/api/user/register").permitAll()
                     .anyRequest().authenticated()
+                     */
             )
-            .formLogin(form -> form
+            /*.formLogin(form -> form
                     .loginPage("/login")
                     .permitAll()
-            )
+            )*/
+            .formLogin(AbstractHttpConfigurer::disable)//to be removed later
             .userDetailsService(customUserDetailsService)
             .logout(LogoutConfigurer::permitAll);
 

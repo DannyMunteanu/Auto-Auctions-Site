@@ -36,7 +36,7 @@ public class ManufacturerService {
      * @return All manufacturers.
      */
     public List<Manufacturer> findAll() {
-        return manufacturerRepository.findAll(Sort.by(Sort.Order.asc("manufacturer")));
+        return manufacturerRepository.findAll(Sort.by(Sort.Order.asc("make")));
     }
 
     /**
