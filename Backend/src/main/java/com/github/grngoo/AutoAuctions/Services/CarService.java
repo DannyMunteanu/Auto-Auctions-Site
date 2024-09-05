@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Service for Car(s).
@@ -17,6 +18,15 @@ public class CarService {
 
     @Autowired
     private CarRepository carRepository;
+
+    /**
+     * Find all cars based on type of model.
+     *
+     * @return all cars.
+     */
+    public List<Car> findAll() {
+        return carRepository.findAll();
+    }
 
     /**
      * Find cars based on type of model.
@@ -47,6 +57,17 @@ public class CarService {
      */
     public List<Car> findByMileage(Integer minMiles, Integer maxMiles) {
         return carRepository.findByMileageBetween(minMiles, maxMiles);
+    }
+
+    /**
+     * Specifies desired number of owners
+     *
+     * @param minYear oldest year.
+     * @param maxYear newest year.
+     * @return cars within the specified range.
+     */
+    public List<Car> findByYear(Integer minYear, Integer maxYear) {
+        return carRepository.findByYearBetween(minYear, maxYear);
     }
 
     /**
