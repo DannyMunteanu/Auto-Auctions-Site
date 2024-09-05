@@ -41,14 +41,12 @@ public class Bid {
     /**
      * Parameterised constructor for the Bid class.
      *
-     * @param bidid the unique identifier for the bid
      * @param listing the listing on which the bid was placed
      * @param bid_time the time when the bid was placed
      * @param amount the amount of money for the bid
      * @param user the user who placed the bid
      */
-    public Bid(Long bidid, Listing listing, LocalDateTime bid_time, BigDecimal amount, Users user) {
-        this.bidid = bidid;
+    public Bid(Listing listing, LocalDateTime bid_time, BigDecimal amount, Users user) {
         this.listing = listing;
         this.time = bid_time;
         this.amount = amount;
@@ -98,6 +96,15 @@ public class Bid {
      */
     public Users getUser() {
         return user;
+    }
+
+    /**
+     * For Testing purposes only
+     *
+     * @param bidid Test id.
+     */
+    public void setBidid(Long bidid) {
+        this.bidid = bidid;
     }
 
     /**

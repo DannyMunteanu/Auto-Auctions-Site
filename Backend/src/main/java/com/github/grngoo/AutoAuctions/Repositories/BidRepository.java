@@ -35,11 +35,11 @@ public interface BidRepository extends JpaRepository<Bid, Long> {
     List<Bid> findByListingListingid(Long listingListingid);
 
     /**
-     * Finds the highest bid for a specific listing by listing ID.
+     * Finds the highest bid for a specific listing by listing ID using native SQL.
      *
      * @param listingId the ID of the listing for which the highest bid is to be retrieved.
-     * @return an optional containing the highest bid for the given listing, or empty if no bids are found.
+     * @return the highest bid for the given listing, or null if no bids are found.
      */
-    @Query("SELECT b FROM Bid b WHERE b.listing.listingid = :listingId ORDER BY b.amount DESC")
-    Optional<Bid> findHighestBidForListing(@Param("listingId") Long listingId);
+    @Query(value = "SELECT * FROM bid WHERE listingid = :listingId ORDER BY amount DESC LIMIT 1", nativeQuery = true)
+    Bid findHighestBidForListing(@Param("listingId") Long listingId);
 }

@@ -25,6 +25,16 @@ public class ListingService {
     private ListingRepository listingRepository;
 
     /**
+     * Find listing via ID
+     *
+     * @param listingId unique value for each listing.
+     * @return listing entity(all details for listing) contained in Optional.
+     */
+    public Optional<Listing> findListing(Long listingId) {
+        return listingRepository.findById(listingId);
+    }
+
+    /**
      * Find a specific listing based on the registration of the car.
      * @param registration unique value ID for each car.
      * @return the listing entity representing listing.
