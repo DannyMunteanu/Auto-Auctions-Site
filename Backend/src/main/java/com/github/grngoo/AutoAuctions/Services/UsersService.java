@@ -1,5 +1,6 @@
 package com.github.grngoo.AutoAuctions.Services;
 
+import com.github.grngoo.AutoAuctions.DTOs.UsersDto;
 import com.github.grngoo.AutoAuctions.Models.Users;
 import com.github.grngoo.AutoAuctions.Repositories.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,28 +21,35 @@ public class UsersService {
     /**
      * Authenticate user based on username and password.
      *
-     * @param username the username of the account.
-     * @param password the plain text password of the account.
+     * @param usersDto contains username and password params of user.
      * @return Optional user containing the user if authentication is successful, otherwise empty.
      */
-    public Optional<Users> loginUser(String username, String password) {
-        Optional<Users> userOpt = usersRepository.findById(username);
+    public Users loginUser(UsersDto usersDto) {
+        Optional<Users> userOpt = usersRepository.findById(usersDto.getUsername());
         if (userOpt.isPresent()) {
             Users user = userOpt.get();
-            if (passwordEncoder.matches(password, user.getPassword())) {
-                return Optional.of(user);
+            if (passwordEncoder.matches(usersDto.getPassword(), user.getPassword())) {
+                return user;
             }
         }
-        return Optional.empty();
+        throw new IllegalArgumentException("Invalid username/password provided");
     }
 
     /**
      * Register a new user, ensuring unique username, email, and telephone.
      *
-     * @param user user entity representing user account.
+     * @param usersDto contains params to construct user entity representing user account.
      * @return newly added entity.
      */
-    public Users registerUser(Users user) {
+    public Users registerUser(UsersDto usersDto) {
+        Users user = new Users(
+                usersDto.getUsername(),
+                usersDto.getPassword(),
+                usersDto.getEmail(),
+                usersDto.getTelephone(),
+                usersDto.getPostal_code(),
+                usersDto.getCountry()
+        );
         avoidDuplicateDetails(user);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return usersRepository.save(user);
@@ -50,20 +58,19 @@ public class UsersService {
     /**
      * Requires a valid username and password combination to delete user.
      *
-     * @param username name of user account.
-     * @param rawPassword secret value of user.
+     * @param usersDto Contains params (username and password) of user.
      * @return boolean indicating if the user was deleted.
      */
-    public boolean deleteUser(String username, String rawPassword) {
-        Optional<Users> userOpt = usersRepository.findById(username);
+    public void deleteUser(UsersDto usersDto) {
+        Optional<Users> userOpt = usersRepository.findById(usersDto.getUsername());
         if (userOpt.isPresent()) {
             Users user = userOpt.get();
-            if (passwordEncoder.matches(rawPassword, user.getPassword())) {
+            if (passwordEncoder.matches(usersDto.getPassword(), user.getPassword())) {
                 usersRepository.deleteById(user.getUsername());
-                return true;
+                return;
             }
         }
-        return false;
+        throw new IllegalArgumentException("Invalid username/password provided");
     }
 
     /**

@@ -12,9 +12,8 @@ public class ModelDto {
     private String make;
     private String series;
     private String name;
-    private BigDecimal minDisplacement;
-    private BigDecimal maxDisplacement;
-    private Integer cylinders;
+    private BigDecimal[] displacement;
+    private Integer[] cylinders;
 
     /**
      * Gets the make of the car model.
@@ -71,56 +70,44 @@ public class ModelDto {
     }
 
     /**
-     * Gets the max engine displacement of the car model.
+     * Gets the engine displacement range of the car model request DTO.
      *
-     * @return the displacement of the car model.
+     * @return the range for displacement of the car model.
      */
-    public BigDecimal getMaxDisplacement() {
-        return maxDisplacement;
-    }
-
-    /**
-     * Sets the max engine displacement of the car model.
-     *
-     * @param displacement the displacement of the car model.
-     */
-    public void setMaxDisplacement(BigDecimal displacement) {
-        this.maxDisplacement = displacement;
-    }
-
-    /**
-     * Gets the min engine displacement of the car model.
-     *
-     * @return the min displacement of the car model.
-     */
-    public BigDecimal getMinDisplacement() {
-        return minDisplacement;
+    public BigDecimal[] getDisplacement() {
+        return displacement;
     }
 
     /**
      * Sets the min engine displacement of the car model.
      *
-     * @param displacement the min displacement of the car model.
+     * @param min desired minimum engine displacement input.
+     * @param max desired maximum engine displacement input.
      */
-    public void setMinDisplacement(BigDecimal displacement) {
-        this.minDisplacement = displacement;
+    public void setDisplacement(BigDecimal min, BigDecimal max) {
+        displacement = new BigDecimal[2];
+        displacement[0] = min;
+        displacement[1] = max;
     }
 
     /**
-     * Gets the number of cylinders in the car model.
+     * Gets the number of cylinders in the car model (can be a range).
      *
-     * @return the number of cylinders in the car model.
+     * @return the desired min/max range of cylinders of car model.
      */
-    public Integer getCylinders() {
+    public Integer[] getCylinders() {
         return cylinders;
     }
 
     /**
-     * Sets the number of cylinders in the car model.
+     * Sets the desired input range of cylinders of model.
      *
-     * @param cylinders the number of cylinders in the car model.
+     * @param min minimum number of cylinders for input.
+     * @param max maxmium number of cylinders for input.
      */
-    public void setCylinders(Integer cylinders) {
-        this.cylinders = cylinders;
+    public void setCylinders(Integer min, Integer max) {
+        cylinders = new Integer[2];
+        cylinders[1] = min;
+        cylinders[2] = max;
     }
 }

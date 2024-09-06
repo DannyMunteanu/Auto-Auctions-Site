@@ -1,11 +1,13 @@
 package com.github.grngoo.AutoAuctions.Services;
 
+import com.github.grngoo.AutoAuctions.DTOs.ManufacturerDto;
 import com.github.grngoo.AutoAuctions.Models.Manufacturer;
 import com.github.grngoo.AutoAuctions.Repositories.ManufacturerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,17 +37,22 @@ public class ManufacturerService {
      *
      * @return All manufacturers.
      */
-    public List<Manufacturer> findAll() {
-        return manufacturerRepository.findAll(Sort.by(Sort.Order.asc("make")));
+    public Manufacturer findManufacturer(ManufacturerDto manufacturerDto) {
+        return manufacturerRepository.findById(manufacturerDto.getName()).get();
     }
 
     /**
-     * Search for all manufacturers of a certain nation.
+     * Search for all manufacturers.
+     * If country filter applied, search all of a certain nation.
      *
-     * @param country origin country of manufacturer.
+     * @param manufacturerDto contains param (origin country).
      * @return A collection of manufacturers.
      */
-    public List<Manufacturer> findByOriginCountry(String country) {
-        return manufacturerRepository.findByOrigincountry(country);
+    public List<Manufacturer> filterManufacturers(ManufacturerDto manufacturerDto) {
+        List<Manufacturer> manufacturersSet = manufacturerRepository.findAll(Sort.by(Sort.Order.asc("make")));
+        if (manufacturerDto.getCountry() != null) {
+            manufacturersSet.retainAll(manufacturerRepository.findByOrigincountry(manufacturerDto.getCountry()));
+        }
+        return  manufacturersSet;
     }
 }

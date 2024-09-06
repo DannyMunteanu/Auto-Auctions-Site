@@ -3,12 +3,13 @@ package com.github.grngoo.AutoAuctions.Services;
 import com.github.grngoo.AutoAuctions.DTOs.ListingDto;
 import com.github.grngoo.AutoAuctions.Models.Car;
 import com.github.grngoo.AutoAuctions.Models.Listing;
+import com.github.grngoo.AutoAuctions.Models.Users;
 import com.github.grngoo.AutoAuctions.Repositories.CarRepository;
 import com.github.grngoo.AutoAuctions.Repositories.ListingRepository;
+import com.github.grngoo.AutoAuctions.Repositories.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -23,6 +24,12 @@ public class ListingService {
 
     @Autowired
     private ListingRepository listingRepository;
+
+    @Autowired
+    private CarRepository carRepository;
+
+    @Autowired
+    private UsersRepository usersRepository;
 
     /**
      * Find listing via ID
@@ -72,13 +79,22 @@ public class ListingService {
     /**
      * Save a new listing to system and return saved entity.
      *
-     * @param listing new listing to be added.
+     * @param listingDto container with parameters for new listing to be added.
      * @return newly added entity.
      */
-    public Listing saveListing(Listing listing) {
-        Optional<Listing> existingListing = listingRepository.findByCarRegistration(listing.getCar().getRegistration());
+    public Listing saveListing(ListingDto listingDto) {
+        Optional<Listing> existingListing = listingRepository.findByCarRegistration(listingDto.getRegistration());
         if (existingListing.isEmpty()) {
-            return listingRepository.save(listing);
+            Car car = carRepository.findById(listingDto.getRegistration()).get();
+            Users user = usersRepository.findById(listingDto.getUsername()).get();
+            Listing newListing = new Listing(
+                    car,
+                    user,
+                    listingDto.getReserve()[0],
+                    listingDto.getTime()[0],
+                    listingDto.getTime()[1]
+            );
+            return listingRepository.save(newListing);
         } else {
             throw new IllegalArgumentException("This car is registered to a listing.");
         }
@@ -87,9 +103,10 @@ public class ListingService {
     /**
      * Delete a specified listing from table.
      *
-     * @param id unique value for each listing.
+     * @param listingDto container for unique value for each listing.
      */
-    public void deleteListing(Long id) {
+    public void deleteListing(ListingDto listingDto) {
+        Long id = listingDto.getListingId();
         if (listingRepository.findById(id).isPresent()) {
             listingRepository.deleteById(id);
         } else throw new IllegalArgumentException("The listing ID provided is invalid");

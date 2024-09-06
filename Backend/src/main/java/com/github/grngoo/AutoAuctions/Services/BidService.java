@@ -3,11 +3,14 @@ package com.github.grngoo.AutoAuctions.Services;
 import com.github.grngoo.AutoAuctions.DTOs.BidDto;
 import com.github.grngoo.AutoAuctions.Models.Bid;
 import com.github.grngoo.AutoAuctions.Models.Listing;
+import com.github.grngoo.AutoAuctions.Models.Users;
 import com.github.grngoo.AutoAuctions.Repositories.BidRepository;
 import com.github.grngoo.AutoAuctions.Repositories.ListingRepository;
+import com.github.grngoo.AutoAuctions.Repositories.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -25,6 +28,9 @@ public class BidService {
 
     @Autowired
     private ListingRepository listingRepository;
+
+    @Autowired
+    private UsersRepository usersRepository;
 
     /**
      * Find a specific Bid.
@@ -86,20 +92,54 @@ public class BidService {
     }
 
     /**
-     * Save newly made bid.
-     * Cannot place bid before start or after end of listing.
+     * Saves a new bid entity with given a DTO.
+     * The bid must be placed within the listing period and must be higher than the current highest bid.
      *
-     * @param bid new entity for bid.
-     * @return nwley created bid entity once saved.
+     * @param bidDto container with params for the new bid entity to be saved.
+     * @return the newly created bid entity once saved.
+     * @throws IllegalArgumentException if the bid is placed outside the listing period or is lower than the current highest bid.
      */
-    public Bid saveBid(Bid bid) {
-        Listing listing = bid.getListing();
+    public Bid saveBid(BidDto bidDto) {
+        Listing listing = listingRepository.findById(bidDto.getListingId()).get();
+        Users user = usersRepository.findById(bidDto.getUsername()).get();
+        Bid bid = new Bid(
+                listing,
+                bidDto.getTime(),
+                bidDto.getAmount(),
+                user
+        );
+        BigDecimal highestBid = findHighestBid(listing.getListingid()).getAmount();
+        validateBidTime(bid, listing);
+        validateBidAmount(bid, highestBid);
+        return bidRepository.save(bid);
+    }
+
+    /**
+     * Validates if the bid is within the listing's active time period.
+     *
+     * @param bid the bid to validate.
+     * @param listing the listing associated with the bid.
+     * @throws IllegalArgumentException if the bid is placed outside the listing's active time.
+     */
+    private void validateBidTime(Bid bid, Listing listing) {
         if (bid.getTime().isAfter(listing.getEnd())) {
             throw new IllegalArgumentException("Bid was placed after the listing ended.");
-        } else if (bid.getTime().isBefore(listing.getStart())) {
+        }
+        if (bid.getTime().isBefore(listing.getStart())) {
             throw new IllegalArgumentException("Bid was placed before the listing started.");
-        } else {
-            return bidRepository.save(bid);
+        }
+    }
+
+    /**
+     * Validates if the bid amount is higher than the current highest bid.
+     *
+     * @param bid the bid to validate.
+     * @param highestBid the current highest bid amount.
+     * @throws IllegalArgumentException if the bid amount is lower than or equal to the highest bid.
+     */
+    private void validateBidAmount(Bid bid, BigDecimal highestBid) {
+        if (highestBid != null && highestBid.compareTo(bid.getAmount()) >= 0) {
+            throw new IllegalArgumentException("Current bid amount is less than or equal to the highest bid.");
         }
     }
 }

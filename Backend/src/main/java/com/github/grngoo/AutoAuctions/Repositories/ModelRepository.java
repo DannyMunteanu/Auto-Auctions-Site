@@ -50,10 +50,11 @@ public interface ModelRepository extends JpaRepository<Model, Long> {
     List<Model> findByDisplacementBetween(BigDecimal minDisplacement, BigDecimal maxDisplacement);
 
     /**
-     * Query for all models of particular cylinder count.
+     * Query for all models of particular range of number of cylinders.
      *
-     * @param cylinders number of engine cylinders/pistons.
+     * @param minCylinders minimum number of engine cylinders/pistons.
+     * @param maxCylinders maximum number of engine cylinders/pistons.
      * @return A list of Models with specified cylinder count.
      */
-    List<Model> findByCylinders(Integer cylinders);
+    List<Model> findByCylindersBetween(Integer minCylinders, Integer maxCylinders);
 }

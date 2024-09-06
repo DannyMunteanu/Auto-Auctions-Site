@@ -24,25 +24,32 @@ public class ManufacturerController {
     private ManufacturerService manufacturerService;
 
     /**
-     * Show all the stored manufacturers.
+     * Find manufacturer by name.
      *
      * @return a list of all manufacturers.
      */
-    @GetMapping("/all")
-    public ResponseEntity<List<Manufacturer>> allManfacturers() {
-        List<Manufacturer> manufacturers = manufacturerService.findAll();
-        return new ResponseEntity<>(manufacturers, HttpStatus.OK);
+    @GetMapping("/specific")
+    public ResponseEntity<Manufacturer> findManfacturer(@Valid @RequestBody ManufacturerDto manufacturerDto) {
+        try {
+            return new ResponseEntity<Manufacturer>(manufacturerService.findManufacturer(manufacturerDto), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
     }
 
     /**
-     * Show all manufacturers from certain country.
+     * Show all manufacturers.
+     * If filter given the show all from certain country.
      *
      * @param manufacturerDto Data Transferrable Object to store request body params.
-     * @return a list of manufacturers from one country.
+     * @return a list of manufacturers filtered/unfiltered.
      */
-    @GetMapping("/country")
-    public ResponseEntity<List<Manufacturer>> countryOfManufacturers(@Valid @RequestBody ManufacturerDto manufacturerDto) {
-        List<Manufacturer> manufacturers = manufacturerService.findByOriginCountry(manufacturerDto.getCountry());
-        return new ResponseEntity<>(manufacturers, HttpStatus.OK);
+    @GetMapping("/search")
+    public ResponseEntity<List<Manufacturer>> searchManufacturers(@Valid @RequestBody ManufacturerDto manufacturerDto) {
+        try {
+            return new ResponseEntity<List<Manufacturer>>(manufacturerService.filterManufacturers(manufacturerDto), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
     }
 }

@@ -14,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/bid")
@@ -23,15 +22,9 @@ public class BidController {
     @Autowired
     private BidService bidService;
 
-    @Autowired
-    private ListingRepository listingRepository;
-
-    @Autowired
-    private UsersRepository usersRepository;
-
     /**
      * Search for all bids based on given dto filters.
-     * 
+     *
      * @param bidDto specify the attributes to filter by (listing or user)
      * @return listings matching filter (default return all).
      */
@@ -69,16 +62,7 @@ public class BidController {
     @PostMapping("/add")
     public ResponseEntity<Bid> addBid(@Valid @RequestBody BidDto bidDto) {
         try {
-            Listing listing = listingRepository.findById(bidDto.getListingId()).get();
-            Users user = usersRepository.findById(bidDto.getUsername()).get();
-            Bid bid = new Bid(
-                    listing,
-                    bidDto.getTime(),
-                    bidDto.getAmount(),
-                    user
-            );
-            System.out.println("bid created");
-            return new ResponseEntity<Bid>(bidService.saveBid(bid), HttpStatus.OK);
+            return new ResponseEntity<Bid>(bidService.saveBid(bidDto), HttpStatus.OK);
         } catch(Exception e) {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }

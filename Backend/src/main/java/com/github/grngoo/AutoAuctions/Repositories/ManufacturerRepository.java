@@ -4,6 +4,7 @@ import com.github.grngoo.AutoAuctions.Models.Manufacturer;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Repository Interface for Manufacturer
@@ -11,6 +12,7 @@ import java.util.List;
  */
 @Repository
 public interface ManufacturerRepository extends JpaRepository<Manufacturer, String> {
+
     /**
      * Finds all Manufacturers by their country of origin.
      *
