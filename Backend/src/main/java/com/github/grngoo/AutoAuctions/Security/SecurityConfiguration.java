@@ -1,5 +1,6 @@
-package com.github.grngoo.AutoAuctions.Configurations;
+package com.github.grngoo.AutoAuctions.Security;
 
+import com.github.grngoo.AutoAuctions.Repositories.UsersRepository;
 import com.github.grngoo.AutoAuctions.Services.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -10,6 +11,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
  * Spring Security Configuration
@@ -22,6 +24,12 @@ public class SecurityConfiguration {
     @Autowired
     CustomUserDetailsService customUserDetailsService;
 
+    @Autowired
+    private JwtUtility jwtUtility;
+
+    @Autowired
+    private UsersRepository usersRepository;
+
     /**
      * Configures the security filter chain.
      *
@@ -33,21 +41,19 @@ public class SecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .csrf(AbstractHttpConfigurer::disable)
-            //for now making all pages accessible for testing
             .authorizeHttpRequests(auths -> auths
-                    .anyRequest().permitAll()
-                    /*
                     .requestMatchers("/api/user/login", "/api/user/register").permitAll()
                     .anyRequest().authenticated()
-                     */
             )
-            /*.formLogin(form -> form
+            .formLogin(form -> form
                     .loginPage("/login")
                     .permitAll()
-            )*/
+            )
             .formLogin(AbstractHttpConfigurer::disable)//to be removed later
             .userDetailsService(customUserDetailsService)
             .logout(LogoutConfigurer::permitAll);
+        http.addFilterBefore(new JwtRequestFilter(jwtUtility, usersRepository), UsernamePasswordAuthenticationFilter.class);
+
 
         return http.build();
     }
