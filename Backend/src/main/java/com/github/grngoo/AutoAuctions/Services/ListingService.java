@@ -1,11 +1,16 @@
 package com.github.grngoo.AutoAuctions.Services;
 
+import com.github.grngoo.AutoAuctions.DTOs.ListingDto;
+import com.github.grngoo.AutoAuctions.Models.Car;
 import com.github.grngoo.AutoAuctions.Models.Listing;
+import com.github.grngoo.AutoAuctions.Models.Users;
+import com.github.grngoo.AutoAuctions.Repositories.CarRepository;
 import com.github.grngoo.AutoAuctions.Repositories.ListingRepository;
+import com.github.grngoo.AutoAuctions.Repositories.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,62 +25,90 @@ public class ListingService {
     @Autowired
     private ListingRepository listingRepository;
 
+    @Autowired
+    private CarRepository carRepository;
+
+    @Autowired
+    private UsersRepository usersRepository;
+
     /**
-     * Finds a specified listing
+     * Find listing via ID
      *
-     * @param id unique attribute for Listing entities.
-     * @return listing entity or null if not found.
+     * @param listingId unique value for each listing.
+     * @return listing entity(all details for listing) contained in Optional.
      */
-    public Optional<Listing> findListing(Long id) {
-        return listingRepository.findById(id);
+    public Optional<Listing> findListing(Long listingId) {
+        return listingRepository.findById(listingId);
     }
 
     /**
-     * Finds all listings created by an account.
-     *
-     * @param username unique name of account.
-     * @return All listings with same associated user.
+     * Find a specific listing based on the registration of the car.
+     * @param registration unique value ID for each car.
+     * @return the listing entity representing listing.
      */
-    public List<Listing> findByUsername(String username) {
-        return listingRepository.findByUserUsername(username);
+    public Listing findListingByReg(String registration) {
+        return listingRepository.findByCarRegistration(registration).get();
     }
 
     /**
-     * Finds all listings that begin for bidding after a specific time.
+     * Find all listings and filter based on input.
+     * If there is no input then return all listing.
+     * Otherwise, returns an intersection set of filtered results from repository.
+     * Note: requires start/end time, min/max reserve.
+     * User filter only applied if specified.
      *
-     * @param startTime exact moment of time of start.
-     * @return listings beginning after given time.
+     * @param listingDto Contains all request param for search filters
+     * @return A set of listings filtered or unfiltered.
      */
-    public List<Listing> findByStartAfter(LocalDateTime startTime) {
-        return listingRepository.findByStartAfter(startTime);
-    }
-
-    /**
-     * Finds all listing that end before a given date.
-     *
-     * @param endTime specified time limit for all desired listing.
-     * @return all listings that are within the desired time limit.
-     */
-    public List<Listing> findByEndBefore(LocalDateTime endTime) {
-        return listingRepository.findByEndBefore(endTime);
-    }
-
-    /**
-     * Delete a specified listing from table.
-     *
-     * @param id unique value for each listing.
-     */
-    public void deleteListing(Long id) {
-        listingRepository.deleteById(id);
+    public List<Listing> filterListing(ListingDto listingDto) {
+        List<Listing> listingSet = listingRepository.findAll();
+        List<List<Listing>> allFilterSet = new ArrayList<>();
+        allFilterSet.add(listingRepository.findByStartAfter(listingDto.getTime()[0]));
+        allFilterSet.add(listingRepository.findByEndBefore(listingDto.getTime()[1]));
+        allFilterSet.add(listingRepository.findByReserveGreaterThan(listingDto.getReserve()[0]));
+        allFilterSet.add(listingRepository.findByReserveLessThan(listingDto.getReserve()[1]));
+        if (listingDto.getUsername() != null) {
+            allFilterSet.add(listingRepository.findByUserUsername(listingDto.getUsername()));
+        }
+        for (List<Listing> filterSet : allFilterSet) {
+            listingSet.retainAll(filterSet);
+        }
+        return listingSet;
     }
 
     /**
      * Save a new listing to system and return saved entity.
      *
-     * @param listing new listing to be added.
+     * @param listingDto container with parameters for new listing to be added.
      * @return newly added entity.
      */
-    public Listing saveListing(Listing listing) {
-        return listingRepository.save(listing);
+    public Listing saveListing(ListingDto listingDto) {
+        Optional<Listing> existingListing = listingRepository.findByCarRegistration(listingDto.getRegistration());
+        if (existingListing.isEmpty()) {
+            Car car = carRepository.findById(listingDto.getRegistration()).get();
+            Users user = usersRepository.findById(listingDto.getUsername()).get();
+            Listing newListing = new Listing(
+                    car,
+                    user,
+                    listingDto.getReserve()[0],
+                    listingDto.getTime()[0],
+                    listingDto.getTime()[1]
+            );
+            return listingRepository.save(newListing);
+        } else {
+            throw new IllegalArgumentException("This car is registered to a listing.");
+        }
+    }
+
+    /**
+     * Delete a specified listing from table.
+     *
+     * @param listingDto container for unique value for each listing.
+     */
+    public void deleteListing(ListingDto listingDto) {
+        Long id = listingDto.getListingId();
+        if (listingRepository.findById(id).isPresent()) {
+            listingRepository.deleteById(id);
+        } else throw new IllegalArgumentException("The listing ID provided is invalid");
     }
 }

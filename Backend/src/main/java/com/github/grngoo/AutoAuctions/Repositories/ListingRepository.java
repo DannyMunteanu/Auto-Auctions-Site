@@ -1,12 +1,15 @@
 package com.github.grngoo.AutoAuctions.Repositories;
 
+import com.github.grngoo.AutoAuctions.Models.Car;
 import com.github.grngoo.AutoAuctions.Models.Listing;
 import com.github.grngoo.AutoAuctions.Models.Users;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Repository Interface for Listing
@@ -39,4 +42,28 @@ public interface ListingRepository extends JpaRepository<Listing, Long> {
      * @return a list of listings that end before the specified time
      */
     List<Listing> findByEndBefore(LocalDateTime end);
+
+    /**
+     * Finds all listings where the reserve price is greater than the specified amount.
+     *
+     * @param reserve the reserve price to compare
+     * @return a list of listings with reserve prices higher than the specified amount
+     */
+    List<Listing> findByReserveGreaterThan(BigDecimal reserve);
+
+    /**
+     * Finds all listings where the reserve price is less than the specified amount.
+     *
+     * @param reserve the reserve price to compare
+     * @return a list of listings with reserve prices lower than the specified amount
+     */
+    List<Listing> findByReserveLessThan(BigDecimal reserve);
+
+    /**
+     * Finds if listing is present via a given car.
+     *
+     * @param registration specific registration of car.
+     * @return Listing for car(reg) as contained object or null if not found.
+     */
+    Optional<Listing> findByCarRegistration(String registration);
 }

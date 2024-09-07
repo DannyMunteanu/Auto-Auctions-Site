@@ -6,11 +6,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-
-import static org.springframework.security.config.Customizer.withDefaults;
 
 /**
  * Spring Security Configuration
@@ -33,14 +32,20 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .authorizeHttpRequests(authz -> authz
-                    .requestMatchers("/api/auth/login", "/api/auth/register").permitAll()
+            .csrf(AbstractHttpConfigurer::disable)
+            //for now making all pages accessible for testing
+            .authorizeHttpRequests(auths -> auths
+                    .anyRequest().permitAll()
+                    /*
+                    .requestMatchers("/api/user/login", "/api/user/register").permitAll()
                     .anyRequest().authenticated()
+                     */
             )
-            .formLogin(form -> form
+            /*.formLogin(form -> form
                     .loginPage("/login")
                     .permitAll()
-            )
+            )*/
+            .formLogin(AbstractHttpConfigurer::disable)//to be removed later
             .userDetailsService(customUserDetailsService)
             .logout(LogoutConfigurer::permitAll);
 

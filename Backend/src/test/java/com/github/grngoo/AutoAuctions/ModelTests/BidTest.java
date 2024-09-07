@@ -28,13 +28,13 @@ class BidTest {
                 "1234567890", "12345", "USA");
         bidTime = LocalDateTime.now();
         amount = new BigDecimal("100.50");
-        bid = new Bid(1L, listing, bidTime, amount, user);
+        bid = new Bid(listing, bidTime, amount, user);
+        bid.setBidid(1L);
     }
 
     @Test
     @DisplayName("Test Bid constructor and getters")
     void testBidConstructorAndGetters() {
-        assertEquals(1L, bid.getBidid());
         assertEquals(listing, bid.getListing());
         assertEquals(bidTime, bid.getTime());
         assertEquals(amount, bid.getAmount());
