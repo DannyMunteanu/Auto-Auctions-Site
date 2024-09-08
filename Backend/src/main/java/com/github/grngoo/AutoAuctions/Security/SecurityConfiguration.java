@@ -5,6 +5,8 @@ import com.github.grngoo.AutoAuctions.Services.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.Scheduled;
+
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -28,6 +30,9 @@ public class SecurityConfiguration {
     private JwtUtility jwtUtility;
 
     @Autowired
+    private JwtTokenBlacklist jwtTokenBlackList;
+
+    @Autowired
     private UsersRepository usersRepository;
 
     /**
@@ -42,19 +47,28 @@ public class SecurityConfiguration {
         http
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(auths -> auths
-                    .requestMatchers("/api/user/login", "/api/user/register").permitAll()
-                    .anyRequest().authenticated()
+                .requestMatchers(
+                    "/api/user/login",
+                    "/api/user/register",
+                    "api/manufacturer/**",
+                    "api/model/search",
+                    "api/car/search",
+                    "api/listing/public/**",
+                    "api/bid/public/**"
+                ).permitAll()
+                .anyRequest().authenticated()
             )
             .formLogin(form -> form
-                    .loginPage("/login")
-                    .permitAll()
+                .loginPage("/login")
+                .permitAll()
             )
             .formLogin(AbstractHttpConfigurer::disable)//to be removed later
             .userDetailsService(customUserDetailsService)
             .logout(LogoutConfigurer::permitAll);
-        http.addFilterBefore(new JwtRequestFilter(jwtUtility, usersRepository), UsernamePasswordAuthenticationFilter.class);
-
-
+        http.addFilterBefore(
+            new JwtRequestFilter(jwtUtility, usersRepository, jwtTokenBlackList),
+            UsernamePasswordAuthenticationFilter.class
+        );
         return http.build();
     }
 
@@ -67,6 +81,16 @@ public class SecurityConfiguration {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    /**
+     * Scheduled process that removes expired tokens every 30 mins.
+     * Helps optimise our Blacklist (reduce overall size).
+     */
+    @Scheduled(fixedRate = 30 * 60 * 1000)
+    public void cleanupBlacklist() {
+        jwtTokenBlackList.removeExpiredTokens();
+        System.out.println("Every (30m/0.5h) Scheduled Process: Auto Removal of Expired Tokens in Blacklist");
     }
 }
 

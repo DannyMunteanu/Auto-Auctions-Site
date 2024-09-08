@@ -2,7 +2,6 @@ package com.github.grngoo.AutoAuctions.Security;
 
 import com.github.grngoo.AutoAuctions.Models.Users;
 import com.github.grngoo.AutoAuctions.Repositories.UsersRepository;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,38 +16,46 @@ import java.util.Optional;
 
 /**
  * Filter to validate JWT tokens and set authentication in the security context.
+ *
+ * @author danielmunteanu
  */
 public class JwtRequestFilter extends OncePerRequestFilter {
 
     @Autowired
-    private JwtUtility jwtUtility;
+    private final JwtUtility jwtUtility;
 
     @Autowired
-    private UsersRepository usersRepository;
+    private final UsersRepository usersRepository;
 
-    /**
-     * Constructs a JwtRequestFilter with the specified JwtUtility and UsersRepository.
-     *
-     * @param jwtUtil the JwtUtility to use for token operations
-     * @param usersRepository the UsersRepository to access user data
-     */
-    public JwtRequestFilter(JwtUtility jwtUtil, UsersRepository usersRepository) {
-        this.jwtUtility = jwtUtil;
+    @Autowired
+    private final JwtTokenBlacklist jwtTokenBlacklist;
+
+    public JwtRequestFilter(JwtUtility jwtUtility, UsersRepository usersRepository, JwtTokenBlacklist jwtTokenBlacklist) {
+        this.jwtUtility = jwtUtility;
         this.usersRepository = usersRepository;
+        this.jwtTokenBlacklist = jwtTokenBlacklist;
     }
 
     /**
-     * Processes the request and validates the JWT token if present.
+     * Filters incoming HTTP requests to authenticate users based on JWT tokens.
+     * Extracts the JWT token from the "Authorization" header and validates it.
+     * If the token is valid and not blacklisted, it authenticates the user.
+     * By setting the authentication in the SecurityContext.
+     * If the token is blacklisted or invalid, request is forbidden.
      *
-     * @param request the HTTP request
-     * @param response the HTTP response
-     * @param chain the filter chain to pass the request and response
-     * @throws ServletException if an error occurs during filtering
-     * @throws IOException if an I/O error occurs
+     * @param request the HTTP request containing the JWT token in the "Authorization" header.
+     * @param response the HTTP response.
+     * @param chain the filter chain to continue processing the request.
+     * @throws ServletException if an error occurs during request processing.
+     * @throws IOException if an input or output error occurs.
      */
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
-            throws ServletException, IOException {
+    protected void doFilterInternal(
+        HttpServletRequest request,
+        HttpServletResponse response,
+        FilterChain chain
+    ) throws ServletException, IOException {
+
         final String authorizationHeader = request.getHeader("Authorization");
         String username = null;
         String jwt = null;
@@ -57,12 +64,17 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             username = jwtUtility.extractUsername(jwt);
         }
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            if (jwtTokenBlacklist.searchBlacklist(jwt)) {
+                System.out.println("Token is blacklisted.");
+                chain.doFilter(request, response);
+                return;
+            }
             Optional<Users> userOpt = usersRepository.findById(username);
             if (userOpt.isPresent()) {
                 Users user = userOpt.get();
                 if (jwtUtility.validateToken(jwt, username)) {
-                    UsernamePasswordAuthenticationToken authenticationToken;
-                    authenticationToken = new UsernamePasswordAuthenticationToken(user, null, null);
+                    UsernamePasswordAuthenticationToken authenticationToken =
+                            new UsernamePasswordAuthenticationToken(user, null, null);
                     SecurityContextHolder.getContext().setAuthentication(authenticationToken);
                 }
             }
