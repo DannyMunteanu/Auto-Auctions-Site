@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
- * Main application class fot spring backend.
+ * Main application class for spring backend.
  *
  * @author danielmunteanu
  */

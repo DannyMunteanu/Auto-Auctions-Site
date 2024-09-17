@@ -50,7 +50,8 @@ public class SecurityConfiguration {
                         "api/model/search",
                         "api/car/search",
                         "api/listing/public/**",
-                        "api/bid/public/**")
+                        "api/bid/public/**",
+                        "api/user/retrieve")
                     .permitAll()
                     .anyRequest()
                     .authenticated())

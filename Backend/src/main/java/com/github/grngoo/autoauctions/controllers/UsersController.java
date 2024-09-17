@@ -9,10 +9,12 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -105,6 +107,23 @@ public class UsersController {
       }
     } catch (Exception e) {
       return ResponseEntity.status(409).body("Unable to delete account");
+    }
+  }
+
+  /**
+   * Get a user entity given a valid jwt token.
+   *
+   * @param authorizationHeader contains the string for JWT token.
+   * @return User details if token valid for user else return http unauthorised.
+   */
+  @GetMapping("/retrieve")
+  public ResponseEntity<Users> getUser(@RequestHeader("Authorization") String authorizationHeader) {
+    try {
+      String token = authorizationHeader.substring(7);
+      String username = jwtUtility.extractUsername(token);
+      return new ResponseEntity<>(usersService.getUser(username), HttpStatus.OK);
+    } catch (Exception e) {
+      return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
   }
 }

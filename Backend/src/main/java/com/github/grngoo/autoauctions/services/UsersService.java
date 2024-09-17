@@ -21,6 +21,24 @@ public class UsersService {
   @Autowired private PasswordEncoder passwordEncoder;
 
   /**
+   * Acts as a helper to registerUser. Validating all unique attributes aren't already in use.
+   *
+   * @param user entity for the new user account.
+   * @throws IllegalArgumentException if the username, email, or telephone is already in use.
+   */
+  private void avoidDuplicateDetails(Users user) throws IllegalArgumentException {
+    if (usersRepository.findById(user.getUsername()).isPresent()) {
+      throw new IllegalArgumentException("Username is already taken.");
+    }
+    if (usersRepository.findByEmail(user.getEmail()).isPresent()) {
+      throw new IllegalArgumentException("Email is already in use.");
+    }
+    if (usersRepository.findByTelephone(user.getTelephone()).isPresent()) {
+      throw new IllegalArgumentException("Telephone number is already in use.");
+    }
+  }
+
+  /**
    * Authenticate user based on username and password.
    *
    * @param usersDto contains username and password params of user.
@@ -75,20 +93,19 @@ public class UsersService {
   }
 
   /**
-   * Acts as a helper to registerUser. Validating all unique attributes aren't already in use.
+   * Gets a user via a username.
+   * This acts as the service for getting a user via token in controllers.
    *
-   * @param user entity for the new user account.
-   * @throws IllegalArgumentException if the username, email, or telephone is already in use.
+   * @param username unique Id for user.
+   * @return The user account(obj) with the given username.
+   * @throws IllegalArgumentException if there is no account of that username.
    */
-  private void avoidDuplicateDetails(Users user) throws IllegalArgumentException {
-    if (usersRepository.findById(user.getUsername()).isPresent()) {
-      throw new IllegalArgumentException("Username is already taken.");
-    }
-    if (usersRepository.findByEmail(user.getEmail()).isPresent()) {
-      throw new IllegalArgumentException("Email is already in use.");
-    }
-    if (usersRepository.findByTelephone(user.getTelephone()).isPresent()) {
-      throw new IllegalArgumentException("Telephone number is already in use.");
+  public Users getUser(String username) throws IllegalArgumentException {
+    Optional<Users> user = usersRepository.findById(username);
+    if (user.isPresent()) {
+      return user.get();
+    } else {
+      throw new IllegalArgumentException("Username invalid");
     }
   }
 }

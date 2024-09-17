@@ -28,11 +28,11 @@ public class CarController {
    * Search and filter car based on given parameters. If no filters given every car is returned. If
    * filters given, a filtered response is given. I.e. all cars within a certain reserve range.
    *
-   * @param carDto DTO containing time, mileage, year, previous owners, color, model
+   * @param carDto DTO containing mileage, year, previous owners, color, model
    *     params(filters).
    * @return A result all desired cars based on filters.
    */
-  @GetMapping("/search")
+  @PostMapping("/search")
   public ResponseEntity<List<Car>> searchCars(@Valid @RequestBody CarDto carDto) {
     try {
       return new ResponseEntity<>(carService.filterCars(carDto), HttpStatus.OK);

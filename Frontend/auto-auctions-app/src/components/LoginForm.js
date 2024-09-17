@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import Cookies from 'js-cookie';
 
 const LoginForm = ({ onSwitch }) => {
   const [formData, setFormData] = useState({
@@ -11,6 +12,8 @@ const LoginForm = ({ onSwitch }) => {
     username: "",
     password: "",
   });
+
+  const [successMessage, setSuccessMessage] = useState("");
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -44,8 +47,15 @@ const LoginForm = ({ onSwitch }) => {
         "http://localhost:8080/api/user/login",
         formData
       );
+      if(response.status === 200) {
+        const jwt = response.data;
+        Cookies.set('jwt', jwt, {expires:28, path:'/'});
+        setSuccessMessage("Sign in successful! Redirecting...");
+        setTimeout(() => {
+          window.location.href = "/";
+        }, 1000);
 
-      console.log("Login successful:", response.data);
+      }
     } catch (error) {
       console.error("Error during login:", error.response);
     }
@@ -95,11 +105,15 @@ const LoginForm = ({ onSwitch }) => {
 
         <button
           type="submit"
-          className="w-full bg-gradient-to-r from-cyan-700 to-sky-900 text-white font-light font-sans py-2 px-4 rounded-md 
+          className="w-full bg-gradient-to-r from-cyan-600 to-blue-900 text-white font-light font-sans py-2 px-4 rounded-md 
           hover:drop-shadow transition duration-50 focus:to-sky-500"
         >
           Sign In
         </button>
+
+        {successMessage && (
+          <p className="text-blue-700 text-xs mt-2 text-center">{successMessage}</p>
+        )}
       </form>
 
       <p className="mt-4 text-center">

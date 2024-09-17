@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -47,13 +48,13 @@ public class BidController {
   /**
    * Given a listing, find the highest bid for the listing.
    *
-   * @param bidDto specify the listingId
+   * @param id specify the listing.
    * @return the bid entity with all details.
    */
   @GetMapping("/public/highest")
-  public ResponseEntity<Bid> highestBid(@Valid @RequestBody BidDto bidDto) {
+  public ResponseEntity<Bid> highestBid(@Valid @RequestParam Long id) {
     try {
-      Bid bid = bidService.findHighestBid(bidDto.getListingId());
+      Bid bid = bidService.findHighestBid(id);
       return new ResponseEntity<>(bid, HttpStatus.OK);
     } catch (Exception e) {
       return new ResponseEntity<>(HttpStatus.CONFLICT);

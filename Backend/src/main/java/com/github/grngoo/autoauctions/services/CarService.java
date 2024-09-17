@@ -31,20 +31,26 @@ public class CarService {
    * @return A set of cars filtered or unfiltered.
    */
   public List<Car> filterCars(CarDto carDto) {
-    List<Car> carSet = carRepository.findAll();
     List<List<Car>> allFilterSet = new ArrayList<>();
-    allFilterSet.add(
-        carRepository.findByMileageBetween(carDto.getMileage()[0], carDto.getMileage()[1]));
-    allFilterSet.add(carRepository.findByYearBetween(carDto.getYear()[0], carDto.getYear()[1]));
-    allFilterSet.add(
-        carRepository.findByPreviousownersBetween(
-            carDto.getPreviousOwners()[0], carDto.getPreviousOwners()[1]));
+    if (carDto.getMileage() != null) {
+      allFilterSet.add(
+          carRepository.findByMileageBetween(carDto.getMileage()[0], carDto.getMileage()[1]));
+    }
+    if (carDto.getYear() != null) {
+      allFilterSet.add(carRepository.findByYearBetween(carDto.getYear()[0], carDto.getYear()[1]));
+    }
+    if (carDto.getPreviousOwners() != null) {
+      allFilterSet.add(
+          carRepository.findByPreviousownersBetween(
+              carDto.getPreviousOwners()[0], carDto.getPreviousOwners()[1]));
+    }
     if (carDto.getColor() != null) {
       allFilterSet.add(carRepository.findByColor(carDto.getColor()));
     }
     if (carDto.getModelId() != null) {
       allFilterSet.add(carRepository.findByModelModelid(carDto.getModelId()));
     }
+    List<Car> carSet = carRepository.findAll();
     for (List<Car> filterSet : allFilterSet) {
       carSet.retainAll(filterSet);
     }

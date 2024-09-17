@@ -57,14 +57,18 @@ public class ListingService {
    */
   public List<Listing> filterListing(ListingDto listingDto) {
     List<List<Listing>> allFilterSet = new ArrayList<>();
-    allFilterSet.add(listingRepository.findByStartAfter(listingDto.getTime()[0]));
-    allFilterSet.add(listingRepository.findByEndBefore(listingDto.getTime()[1]));
-    allFilterSet.add(listingRepository.findByReserveGreaterThan(listingDto.getReserve()[0]));
-    allFilterSet.add(listingRepository.findByReserveLessThan(listingDto.getReserve()[1]));
-    List<Listing> listingSet = listingRepository.findAll();
+    if (listingDto.getTime() != null) {
+      allFilterSet.add(listingRepository.findByStartAfter(listingDto.getTime()[0]));
+      allFilterSet.add(listingRepository.findByEndBefore(listingDto.getTime()[1]));
+    }
+    if (listingDto.getReserve() != null) {
+      allFilterSet.add(listingRepository.findByReserveGreaterThan(listingDto.getReserve()[0]));
+      allFilterSet.add(listingRepository.findByReserveLessThan(listingDto.getReserve()[1]));
+    }
     if (listingDto.getUsername() != null) {
       allFilterSet.add(listingRepository.findByUserUsername(listingDto.getUsername()));
     }
+    List<Listing> listingSet = listingRepository.findAll();
     for (List<Listing> filterSet : allFilterSet) {
       listingSet.retainAll(filterSet);
     }

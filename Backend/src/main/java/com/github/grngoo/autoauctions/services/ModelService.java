@@ -33,12 +33,16 @@ public class ModelService {
    */
   public List<Model> filterModels(ModelDto modelDto) {
     List<List<Model>> allFilterSet = new ArrayList<>();
-    allFilterSet.add(
-        modelRepository.findByDisplacementBetween(
-            modelDto.getDisplacement()[0], modelDto.getDisplacement()[1]));
-    allFilterSet.add(
-        modelRepository.findByCylindersBetween(
-            modelDto.getCylinders()[0], modelDto.getCylinders()[1]));
+    if (modelDto.getDisplacement() != null) {
+      allFilterSet.add(
+          modelRepository.findByDisplacementBetween(
+              modelDto.getDisplacement()[0], modelDto.getDisplacement()[1]));
+    }
+    if (modelDto.getCylinders() != null) {
+      allFilterSet.add(
+          modelRepository.findByCylindersBetween(
+              modelDto.getCylinders()[0], modelDto.getCylinders()[1]));
+    }
     if (modelDto.getMake() != null) {
       allFilterSet.add(modelRepository.findByManufacturerMake(modelDto.getMake()));
     }

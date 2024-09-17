@@ -8,7 +8,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,7 +31,7 @@ public class ModelController {
    * @param modelDto DTO containing make, series name, displacement, cylinders params(filters).
    * @return A result of all desired models based on filters.
    */
-  @GetMapping("/search")
+  @PostMapping("/search")
   public ResponseEntity<List<Model>> searchModels(@Valid @RequestBody ModelDto modelDto) {
     try {
       return new ResponseEntity<>(modelService.filterModels(modelDto), HttpStatus.OK);

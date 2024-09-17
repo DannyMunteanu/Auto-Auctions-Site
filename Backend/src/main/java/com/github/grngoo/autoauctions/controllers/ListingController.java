@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -33,13 +34,13 @@ public class ListingController {
   /**
    * Find a specific listing based on the registration of the car.
    *
-   * @param listingDto Data Transferable Object (required registration in DTO).
+   * @param registration unique id for car contained within a listing.
    * @return A response with listing entity and status code.
    */
   @GetMapping("/public/specified")
-  public ResponseEntity<Listing> specificListing(@Valid @RequestBody ListingDto listingDto) {
+  public ResponseEntity<Listing> specificListing(@Valid @RequestParam String registration) {
     try {
-      Listing listing = listingService.findListingByReg(listingDto.getRegistration());
+      Listing listing = listingService.findListingByReg(registration);
       return new ResponseEntity<>(listing, HttpStatus.OK);
     } catch (Exception e) {
       return new ResponseEntity<>(HttpStatus.CONFLICT);
@@ -54,7 +55,7 @@ public class ListingController {
    * @param listingDto DTO containing time, reserve and optional username params(filters).
    * @return A result all desired listing based on filters.
    */
-  @GetMapping("/public/search")
+  @PostMapping("/public/search")
   public ResponseEntity<List<Listing>> searchListings(@Valid @RequestBody ListingDto listingDto) {
     try {
       return new ResponseEntity<>(
