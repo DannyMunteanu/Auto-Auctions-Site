@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import ListingCard from "../components/ListingCard";
+import ListingFilter from "../components/ListingFilter";
 import Pagination from "../components/Pagination";
 import "../styles/ListingsPage.css";
 
@@ -33,8 +34,7 @@ const ListingsPage = () => {
 
   useEffect(() => {
     axios
-      .post("http://localhost:8080/api/listing/public/search", {
-      })
+      .post("http://localhost:8080/api/listing/public/search", {})
       .then((response) => {
         setListings(response.data);
       })
@@ -50,6 +50,14 @@ const ListingsPage = () => {
     return () => clearInterval(interval);
   }, []);
 
+  const handleFilterSubmit = (filteredListings) => {
+    setListings(filteredListings);
+  };
+
+  const handleFilterReset = (listings) => {
+    setListings(listings);
+  };
+
   const indexOfLastListing = currentPage * listingsPerPage;
   const indexOfFirstListing = indexOfLastListing - listingsPerPage;
   const currentListings = listings.slice(
@@ -61,45 +69,59 @@ const ListingsPage = () => {
 
   return (
     <div className="listings-container mx-auto px-4 py-6">
-      <div className="grid grid-cols-1 xl:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {currentListings.map((listing) => (
-          <ListingCard
-            key={listing.listingid}
-            id={listing.listingid}
-            carmodel={
-              listing.car.model.manufacturer.make +
-              " " +
-              listing.car.model.modelname
-            }
-            series={listing.car.model.series}
-            color={listing.car.color}
-            engine={
-              listing.car.model.displacement +
-              "L " +
-              listing.car.model.cylinders +
-              " Cylinder"
-            }
-            year={listing.car.year}
-            registration={listing.car.registration}
-            mileage={listing.car.mileage}
-            previousowners={listing.car.previousowners}
-            country={listing.user.country}
-            username={listing.user.username}
-            reserve={listing.reserve}
-            startTime={new Date(listing.start)}
-            endTime={new Date(listing.end)}
-            timeRemaining={calculateTimeRemaining(listing.end)} // Calculate and pass timeRemaining to the card
-          />
-        ))}
-      </div>
-      <div className="flex justify-center mt-8">
-        <Pagination
-          listingsPerPage={listingsPerPage}
-          totalListings={listings.length}
-          paginate={paginate}
-          currentPage={currentPage}
-        />
-      </div>
+      <ListingFilter
+        onFilterSubmit={handleFilterSubmit}
+        onFilterReset={handleFilterReset}
+      />
+
+      {listings.length === 0 ? (
+        <div>
+          <h1 className="text-center text-2xl font-light mt-20">No listings available. Given your search filters.</h1>
+          <h4 className="text-center text-xl font-light mt-4">Try adjusing your search.</h4>
+        </div>
+      ) : (
+        <>
+          <div className="grid grid-cols-1 xl:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {currentListings.map((listing) => (
+              <ListingCard
+                key={listing.listingid}
+                id={listing.listingid}
+                carmodel={
+                  listing.car.model.manufacturer.make +
+                  " " +
+                  listing.car.model.modelname
+                }
+                series={listing.car.model.series}
+                color={listing.car.color}
+                engine={
+                  listing.car.model.displacement +
+                  "L " +
+                  listing.car.model.cylinders +
+                  " Cylinder"
+                }
+                year={listing.car.year}
+                registration={listing.car.registration}
+                mileage={listing.car.mileage}
+                previousowners={listing.car.previousowners}
+                country={listing.user.country}
+                username={listing.user.username}
+                reserve={listing.reserve}
+                startTime={new Date(listing.start)}
+                endTime={new Date(listing.end)}
+                timeRemaining={calculateTimeRemaining(listing.end)}
+              />
+            ))}
+          </div>
+          <div className="flex justify-center mt-8">
+            <Pagination
+              listingsPerPage={listingsPerPage}
+              totalListings={listings.length}
+              paginate={paginate}
+              currentPage={currentPage}
+            />
+          </div>
+        </>
+      )}
     </div>
   );
 };
