@@ -48,7 +48,7 @@ public class BidService {
   public List<Bid> filterBids(BidDto bidDto) {
     List<Bid> bidSet = bidRepository.findAll();
     List<List<Bid>> allFilterSet = new ArrayList<>();
-    if (bidDto.getListingId() != null) {
+    if (bidDto.getUsername() != null) {
       allFilterSet.add(bidRepository.findByUserUsername(bidDto.getUsername()));
     }
     if (bidDto.getListingId() != null) {
@@ -100,9 +100,13 @@ public class BidService {
     Listing listing = listingRepository.findById(bidDto.getListingId()).get();
     Users user = usersRepository.findById(bidDto.getUsername()).get();
     Bid bid = new Bid(listing, bidDto.getTime(), bidDto.getAmount(), user);
-    BigDecimal highestBid = findHighestBid(listing.getListingid()).getAmount();
+    System.out.println("Hello");
+    Bid retrievedBid = findHighestBid(listing.getListingid());
+    if (retrievedBid != null) {
+      BigDecimal highestBid = retrievedBid.getAmount();
+      validateBidAmount(bid, highestBid);
+    }
     validateBidTime(bid, listing);
-    validateBidAmount(bid, highestBid);
     return bidRepository.save(bid);
   }
 

@@ -36,7 +36,7 @@ public class BidController {
    * @param bidDto specify the attributes to filter by (listing or user)
    * @return listings matching filter (default return all).
    */
-  @GetMapping("/public/search")
+  @PostMapping ("/public/search")
   public ResponseEntity<List<Bid>> searchBids(@Valid @RequestBody BidDto bidDto) {
     try {
       return new ResponseEntity<>(bidService.filterBids(bidDto), HttpStatus.OK);

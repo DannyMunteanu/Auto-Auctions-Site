@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import RangeDropdown from "./RangeDropdown";
-import DateTimeInput from "./DateTimeInput";
+import RangeDropdown from "../inputs/RangeDropdown";
+import DateTimeInput from "../inputs/DateTimeInput";
 
 const ListingFilter = ({ onFilterSubmit, onFilterReset }) => {
   const min = 0;

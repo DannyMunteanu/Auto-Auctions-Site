@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import LoginForm from "../components/LoginForm";
-import RegisterForm from "../components/RegisterForm";
+import LoginForm from "../components/authentication/LoginForm";
+import RegisterForm from "../components/authentication/RegisterForm";
 
 const AuthenticationPage = () => {
   const location = useLocation();

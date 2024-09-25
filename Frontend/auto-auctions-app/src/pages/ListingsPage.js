@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import ListingCard from "../components/ListingCard";
-import ListingFilter from "../components/ListingFilter";
-import Pagination from "../components/Pagination";
-import "../styles/ListingsPage.css";
+import ListingCard from "../components/listing/ListingCard";
+import ListingFilter from "../components/listing/ListingFilter";
+import Pagination from "../components/additional/Pagination";
 
 const ListingsPage = () => {
   const [listings, setListings] = useState([]);
@@ -68,48 +67,61 @@ const ListingsPage = () => {
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
-    <div className="listings-container mx-auto px-4 py-6">
-      <ListingFilter
-        onFilterSubmit={handleFilterSubmit}
-        onFilterReset={handleFilterReset}
-      />
+    <div className="overflow-y-auto listings-container mx-auto px-4 py-6">
+      <div>
+        <ListingFilter
+          onFilterSubmit={handleFilterSubmit}
+          onFilterReset={handleFilterReset}
+        />
+      </div>
 
       {listings.length === 0 ? (
         <div>
-          <h1 className="text-center text-2xl font-light mt-20">No listings available. Given your search filters.</h1>
-          <h4 className="text-center text-xl font-light mt-4">Try adjusing your search.</h4>
+          <h1 className="text-center text-2xl font-light mt-20">
+            No listings available. Given your search filters.
+          </h1>
+          <h4 className="text-center text-xl font-light mt-4">
+            Try adjusing your search.
+          </h4>
         </div>
       ) : (
         <>
           <div className="grid grid-cols-1 xl:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {currentListings.map((listing) => (
-              <ListingCard
+              <div
                 key={listing.listingid}
-                id={listing.listingid}
-                carmodel={
-                  listing.car.model.manufacturer.make +
-                  " " +
-                  listing.car.model.modelname
+                onClick={() =>
+                  (window.location.href = `/listing/${listing.car.registration}`)
                 }
-                series={listing.car.model.series}
-                color={listing.car.color}
-                engine={
-                  listing.car.model.displacement +
-                  "L " +
-                  listing.car.model.cylinders +
-                  " Cylinder"
-                }
-                year={listing.car.year}
-                registration={listing.car.registration}
-                mileage={listing.car.mileage}
-                previousowners={listing.car.previousowners}
-                country={listing.user.country}
-                username={listing.user.username}
-                reserve={listing.reserve}
-                startTime={new Date(listing.start)}
-                endTime={new Date(listing.end)}
-                timeRemaining={calculateTimeRemaining(listing.end)}
-              />
+                className="block cursor-pointer"
+              >
+                <ListingCard
+                  id={listing.listingid}
+                  carmodel={
+                    listing.car.model.manufacturer.make +
+                    " " +
+                    listing.car.model.modelname
+                  }
+                  series={listing.car.model.series}
+                  color={listing.car.color}
+                  engine={
+                    listing.car.model.displacement +
+                    "L " +
+                    listing.car.model.cylinders +
+                    " Cylinder"
+                  }
+                  year={listing.car.year}
+                  registration={listing.car.registration}
+                  mileage={listing.car.mileage}
+                  previousowners={listing.car.previousowners}
+                  country={listing.user.country}
+                  username={listing.user.username}
+                  reserve={listing.reserve}
+                  startTime={new Date(listing.start)}
+                  endTime={new Date(listing.end)}
+                  timeRemaining={calculateTimeRemaining(listing.end)}
+                />
+              </div>
             ))}
           </div>
           <div className="flex justify-center mt-8">

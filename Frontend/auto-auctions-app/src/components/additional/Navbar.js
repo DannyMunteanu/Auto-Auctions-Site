@@ -14,17 +14,23 @@ const Navbar = () => {
 
   const handleLogout = () => {
     axios
-      .post("http://localhost:8080/api/user/logout", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      .post(
+        "http://localhost:8080/api/user/logout",
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
+      .then(() => {
+        setUser(null);
+        setDropdownOpen(false);
+        Cookies.remove("jwt");
       })
       .catch((error) => {
         console.error("Error validating token:", error);
       });
-    Cookies.remove("jwt");
-    setUser(null);
-    setDropdownOpen(false);
   };
 
   const handleSignIn = () => {
@@ -61,7 +67,7 @@ const Navbar = () => {
           </div>
           <div className="hidden md:flex space-x-4">
             <a href="/" className="text-gray-600 hover:text-blue-600">
-              View Listings
+              Home
             </a>
             <a
               href="/create-listing"
@@ -93,7 +99,7 @@ const Navbar = () => {
             </svg>
           </button>
           {dropdownOpen && (
-            <div className="absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-lg">
+            <div className="absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-lg z-50">
               <ul className="py-2">
                 {user ? (
                   <>

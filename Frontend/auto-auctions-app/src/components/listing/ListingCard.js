@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import Flag from "./Flag";
+import Flag from "../additional/Flag";
 
 const ListingCard = ({
   id,
@@ -52,6 +52,11 @@ const ListingCard = ({
     return new Date(date).toLocaleDateString(undefined, options);
   };
 
+  // Function to format currency to 2 decimal places
+  const formatCurrency = (amount) => {
+    return `£${Number(amount).toFixed(2)}`;
+  };
+
   return (
     <div className="border rounded-lg shadow-md p-4 bg-white max-w-4xl mx-auto">
       <div className="flex">
@@ -82,7 +87,7 @@ const ListingCard = ({
             </a>
           </div>
 
-          <div className="flex space-x-2 text-md  mt-2 mb-2">
+          <div className="flex space-x-2 text-md mt-2 mb-2">
             <p className="text-black font-semibold">{registration}</p>
             <Flag country={country} />
             <p className="text-black">{country}</p>
@@ -109,13 +114,13 @@ const ListingCard = ({
         </div>
       </div>
       <div className="mt-4 border-t-2 pt-4 flex items-center justify-between">
-        <p className="text-sm text-gray-600">Listing ID:{id}</p>
+        <p className="text-sm text-gray-600">Listing ID: {id}</p>
         <h2 className="text-lg font-semibold text-center flex-1">
           {highestBid !== null && highestBid > 0
-            ? `Current Bid: £${highestBid}`
+            ? `Current Bid: ${formatCurrency(highestBid)}`
             : bidMessage}
         </h2>
-        <p className={`text-sm ${reserveColor}`}>Reserve: £{reserve}</p>
+        <p className={`text-sm ${reserveColor}`}>Reserve: {formatCurrency(reserve)}</p>
       </div>
     </div>
   );
