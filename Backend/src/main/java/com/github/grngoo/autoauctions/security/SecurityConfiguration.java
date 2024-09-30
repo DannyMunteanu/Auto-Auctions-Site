@@ -56,7 +56,7 @@ public class SecurityConfiguration {
                     .anyRequest()
                     .authenticated())
         .formLogin(form -> form.loginPage("/login").permitAll())
-        .formLogin(AbstractHttpConfigurer::disable) // to be removed later
+        .formLogin(AbstractHttpConfigurer::disable)
         .userDetailsService(customUserDetailsService)
         .logout(LogoutConfigurer::permitAll);
     http.addFilterBefore(

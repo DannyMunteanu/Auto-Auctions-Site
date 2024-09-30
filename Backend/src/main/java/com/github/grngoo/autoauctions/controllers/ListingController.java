@@ -4,19 +4,23 @@ import com.github.grngoo.autoauctions.dtos.ListingDto;
 import com.github.grngoo.autoauctions.models.Listing;
 import com.github.grngoo.autoauctions.security.JwtUtility;
 import com.github.grngoo.autoauctions.services.ListingService;
+import com.github.grngoo.autoauctions.services.S3Service;
 import jakarta.validation.Valid;
+import java.net.URL;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * Controller for endpoints related to listing functionality.
@@ -30,6 +34,8 @@ public class ListingController {
   @Autowired private ListingService listingService;
 
   @Autowired private JwtUtility jwtUtility;
+
+  @Autowired private S3Service s3Service;
 
   /**
    * Find a specific listing based on the registration of the car.
@@ -58,8 +64,7 @@ public class ListingController {
   @PostMapping("/public/search")
   public ResponseEntity<List<Listing>> searchListings(@Valid @RequestBody ListingDto listingDto) {
     try {
-      return new ResponseEntity<>(
-          listingService.filterListing(listingDto), HttpStatus.OK);
+      return new ResponseEntity<>(listingService.filterListing(listingDto), HttpStatus.OK);
     } catch (Exception e) {
       return new ResponseEntity<>(HttpStatus.CONFLICT);
     }
@@ -108,6 +113,71 @@ public class ListingController {
       return ResponseEntity.status(403).body("Unauthorised request provide valid credentials");
     } catch (Exception e) {
       return ResponseEntity.status(409).body("Unable to delete listing due to invalid ID input");
+    }
+  }
+
+  /**
+   * Upload a new image to S3. Only owner of listing can do this.
+   *
+   * @param listingId key used to find an image url.
+   * @param file image file to be uploaded.
+   * @return Status of operation indicating successful/unsuccessful.
+   */
+  @PostMapping("/{listingId}/image")
+  public ResponseEntity<String> uploadImage(
+      @RequestHeader("Authorization") String authorizationHeader,
+      @PathVariable long listingId,
+      @RequestParam("file") MultipartFile file) {
+    try {
+      String username = listingService.findListing(listingId).get().getUser().getUsername();
+      String token = authorizationHeader.substring(7);
+      if (jwtUtility.validateToken(token, username)) {
+        s3Service.uploadFile(listingId, file);
+        return new ResponseEntity<>("Image uploaded successfully", HttpStatus.OK);
+      }
+      throw new Exception();
+    } catch (Exception e) {
+      return new ResponseEntity<>(
+          "Failed to upload image: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  /**
+   * Get the image related to a listing based on the listing id.
+   *
+   * @param listingId the id for listing also key for S3 Object.
+   * @return The URL for the listing's image (with status).
+   */
+  @GetMapping("public/{listingId}/image")
+  public ResponseEntity<URL> getImageUrl(@PathVariable Long listingId) {
+    try {
+      URL url = s3Service.getFileUrl(listingId);
+      return new ResponseEntity<>(url, HttpStatus.OK);
+    } catch (Exception e) {
+      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+  }
+
+  /**
+   * Delete an image for listing. Only owner of listing can do this.
+   *
+   * @param listingId unique id for listing and key for S3 object.
+   * @return Status of operation indicating successful/unsuccessful.
+   */
+  @DeleteMapping("/{listingId}/image")
+  public ResponseEntity<String> deleteImage(
+      @RequestHeader("Authorization") String authorizationHeader, @PathVariable Long listingId) {
+    try {
+      String username = listingService.findListing(listingId).get().getUser().getUsername();
+      String token = authorizationHeader.substring(7);
+      if (jwtUtility.validateToken(token, username)) {
+        s3Service.deleteFile(listingId);
+        return new ResponseEntity<>("Image deleted successfully", HttpStatus.OK);
+      }
+      throw new Exception();
+    } catch (Exception e) {
+      return new ResponseEntity<>(
+          "Failed to delete image: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }
