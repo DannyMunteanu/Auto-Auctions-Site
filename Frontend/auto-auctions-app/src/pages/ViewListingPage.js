@@ -7,6 +7,8 @@ import BidCard from "../components/bidding/BidCard";
 import BidCardScroll from "../components/bidding/BidCardScroll";
 import PlaceBid from "../components/bidding/PlaceBid";
 
+const DEFAULT_IMAGE_URL = "https://images.pexels.com/photos/100656/pexels-photo-100656.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2";
+
 const ViewListingPage = () => {
   const { registration } = useParams();
   const [listing, setListing] = useState(null);
@@ -16,6 +18,8 @@ const ViewListingPage = () => {
   const [bids, setBids] = useState([]);
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
   const [bidPlaced, setBidPlaced] = useState(false);
+  const [imageUrl, setImageUrl] = useState(DEFAULT_IMAGE_URL);
+
   useEffect(() => {
     fetchListing();
   }, [registration]);
@@ -24,6 +28,7 @@ const ViewListingPage = () => {
     if (listing) {
       fetchHighestBid();
       fetchBids();
+      fetchImageUrl();
     }
   }, [listing, bidPlaced]);
 
@@ -67,6 +72,18 @@ const ViewListingPage = () => {
     } catch (error) {
       console.error("Error fetching all bids:", error);
       setBids([]);
+    }
+  };
+
+  const fetchImageUrl = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8080/api/listing/public/${listing.listingid}/image`
+      );
+      setImageUrl(response.data.toString());
+    } catch (error) {
+      console.error("Error fetching image URL:", error);
+      setImageUrl(DEFAULT_IMAGE_URL);
     }
   };
 
@@ -117,7 +134,7 @@ const ViewListingPage = () => {
         <div className="grid grid-cols-1 lg:grid-cols-[3fr,2fr] gap-4">
           <div className="relative">
             <img
-              src="https://images.pexels.com/photos/100656/pexels-photo-100656.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+              src={imageUrl}
               alt="Listing"
               className="w-full h-full object-cover rounded-lg shadow-lg transition-transform transform hover:scale-105 cursor-pointer"
               onClick={toggleImageModal}
@@ -239,7 +256,7 @@ const ViewListingPage = () => {
         >
           <div className="relative w-5/6 h-5/6">
             <img
-              src="https://images.pexels.com/photos/100656/pexels-photo-100656.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+              src={imageUrl}
               alt="Expanded Listing"
               className="w-full h-full object-cover rounded-lg"
               onClick={(e) => e.stopPropagation()}

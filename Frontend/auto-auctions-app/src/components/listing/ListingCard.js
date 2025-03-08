@@ -20,6 +20,8 @@ const ListingCard = ({
   timeRemaining,
 }) => {
   const [highestBid, setHighestBid] = useState(null);
+  const [imageUrl, setImageUrl] = useState("");
+  const defaultImageUrl = "https://via.placeholder.com/300";
 
   useEffect(() => {
     axios
@@ -29,6 +31,16 @@ const ListingCard = ({
       })
       .catch((error) => {
         console.error("Error fetching highest bid:", error);
+      });
+
+    axios
+      .get(`http://localhost:8080/api/listing/public/${id}/image`)
+      .then((response) => {
+        setImageUrl(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching image URL:", error);
+        setImageUrl(defaultImageUrl);
       });
   }, [id]);
 
@@ -52,7 +64,6 @@ const ListingCard = ({
     return new Date(date).toLocaleDateString(undefined, options);
   };
 
-  // Function to format currency to 2 decimal places
   const formatCurrency = (amount) => {
     return `£${Number(amount).toFixed(2)}`;
   };
@@ -62,7 +73,7 @@ const ListingCard = ({
       <div className="flex">
         <div className="relative">
           <img
-            src="https://images.pexels.com/photos/100656/pexels-photo-100656.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+            src={imageUrl || defaultImageUrl}
             alt="Listing"
             className="w-80 h-60 object-cover border rounded-lg"
           />
